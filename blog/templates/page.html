@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{{ title }} · {{ config.title }}</title>
+  <meta name="description" content="{{ post.description if kind == 'post' else config.description }}">
+  <meta property="og:title" content="{{ title }}"><meta property="og:type" content="{{ 'article' if kind == 'post' else 'website' }}">
+  <meta property="og:description" content="{{ post.description if kind == 'post' else config.description }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <link rel="canonical" href="{{ canonical }}"><link rel="icon" href="/favicon.ico">
+  <link rel="alternate" type="application/rss+xml" title="{{ config.title }}" href="/feed.xml">
+  {% if kind in ['write', '404'] %}<meta name="robots" content="noindex,nofollow">{% endif %}
+  <link rel="stylesheet" href="/assets/theme.css"><script src="/assets/site.js" defer></script>
+  {% if kind == 'write' %}<script src="/assets/write.js" defer></script>{% endif %}
+</head>
+<body data-page="{{ kind }}">
+<a class="skip" href="#main">跳到正文</a>
+<header class="site-header shell">
+  <a class="brand" href="/" aria-label="Manuforest 首页"><span class="monogram">m<span>f.</span></span><span>Manuforest<small>A PERSONAL JOURNAL</small></span></a>
+  <nav aria-label="主导航">
+    <a href="/" {% if kind == 'home' %}aria-current="page"{% endif %}>随记</a>
+    <a href="/archives/" {% if kind == 'archives' %}aria-current="page"{% endif %}>归档</a>
+    <a href="/about/" {% if kind == 'about' %}aria-current="page"{% endif %}>关于</a>
+    <button class="icon-button" id="search-open" aria-label="搜索文章" title="搜索 / Ctrl K">⌕</button>
+    <button class="icon-button" id="theme-toggle" aria-label="切换明暗主题" title="切换明暗主题">◐</button>
+  </nav>
+</header>
+<main id="main" class="shell">
+{% macro card(p) -%}
+<article class="post-card" data-category="{{ p.category }}" data-tags="{{ p.tags|join(',') }}">
+  <div class="card-meta"><span>{{ p.category }}</span><time datetime="{{ p.date }}">{{ p.date|replace('-', '.') }}</time></div>
+  <h3><a href="{{ p.url }}">{{ p.title }}</a></h3>
+  <p>{{ p.description or '有些瞬间，适合留在这里慢慢翻阅。' }}</p>
+  <div class="card-bottom"><span>{{ p.minutes }} 分钟阅读</span><a href="{{ p.url }}" aria-label="阅读：{{ p.title }}">继续读 <span aria-hidden="true">↗</span></a></div>
+</article>
+{%- endmacro %}
+{% if kind == 'home' %}
+<section class="hero">
+  <div><div class="eyebrow"><span class="status-dot"></span> NOTES FROM MY LITTLE CORNER</div>
+    <h1>记录没有<br><em>失去的瞬间。</em><span class="hero-star" aria-hidden="true">✳</span></h1>
+    <p class="hero-desc">{{ config.description }}<br>故事散场之后，把还记得的事写下来。</p>
+    <a class="text-link" href="#journal">翻开最近的几页 <span aria-hidden="true">↓</span></a>
+  </div>
+  <div class="paper-scene" aria-hidden="true">
+    <div class="paper-back"></div><div class="note-paper">
+      <div class="note-top"><span>FIELD NOTES</span><span>No. 001</span></div>
+      <svg class="botanical" viewBox="0 0 240 155" fill="none"><path d="M112 143C117 111 108 87 125 35M115 120C92 105 80 89 71 70M115 103C138 98 154 83 169 65M116 78C103 64 99 47 100 31" stroke="currentColor" stroke-width="1.4"/><path d="M71 70C47 69 43 52 41 43C60 44 73 52 71 70ZM82 89C80 67 89 58 95 56C98 73 94 86 82 89ZM111 124C90 126 72 116 66 105C86 101 105 108 111 124ZM133 95C138 72 149 63 158 62C159 83 147 93 133 95ZM151 83C171 88 187 80 197 68C176 64 158 72 151 83ZM119 60C130 48 142 37 145 20C125 25 114 36 119 60ZM100 31C86 21 76 22 71 23C74 37 84 43 101 47" stroke="currentColor" stroke-width="1.4"/><circle cx="180" cy="30" r="16" stroke="currentColor" stroke-width=".8" opacity=".5"/></svg>
+      <p>在虚构的故事里，<br>收藏真实的片刻。</p><div class="note-bottom"><span>Manuforest</span><span>since 2023</span></div>
+    </div><div class="paper-label">慢慢读，也慢慢写。</div>
+  </div>
+</section>
+<div class="journal-layout" id="journal">
+<section class="journal">
+  <div class="section-heading"><h2>最近写下的<span>THE JOURNAL</span></h2><span class="count">{{ posts|length }} 篇文字</span></div>
+  <div class="filters" role="group" aria-label="按分类筛选"><button class="filter active" data-filter="all" aria-pressed="true">全部</button>{% for category in counts %}<button class="filter" data-filter="{{ category }}" aria-pressed="false">{{ category }}</button>{% endfor %}</div>
+  <div class="post-grid">{% for p in posts %}{{ card(p) }}{% endfor %}</div>
+  <p id="filter-empty" hidden>这一页还没有文字。</p>
+</section>
+<aside class="sidebar">
+  <section class="profile-panel"><div class="eyebrow">THE PERSON BEHIND THE WORDS</div><div class="profile-name"><img class="avatar" src="{{ config.avatar }}" alt="" width="52" height="52"><div><strong>{{ config.author }}</strong><small>不知何时会脱宅的 Galgame 玩家</small></div></div><p>记录没有失去的瞬间。<br>也给记忆留一个可以回来的地方。</p><a class="text-link" href="/about/">关于这个小角落 ↗</a></section>
+  <section class="shelf"><div class="eyebrow">ON THE SHELF</div><h3>按兴趣翻阅</h3>{% for category, count in counts.items() %}<a href="/?category={{ category|urlencode }}#journal"><span>{{ category }}</span><span>{{ '%02d'|format(count) }} ↗</span></a>{% endfor %}</section>
+  <div class="sidebar-note"><span aria-hidden="true">✳</span><p>不着急追上什么。<br>留下一点喜欢的东西就好。</p></div>
+</aside>
+</div>
+{% elif kind == 'post' %}
+<div class="article-layout">
+<article class="article">
+  <a class="breadcrumb" href="/">← 返回随记</a>
+  <header class="article-header"><div class="eyebrow">{{ post.category }} / JOURNAL</div><h1>{{ post.title }}</h1><div class="article-meta"><span>{{ config.author }}</span><time datetime="{{ post.date }}">{{ post.date }}</time><span>{{ post.minutes }} 分钟阅读</span></div></header>
+  <div class="prose" id="article-body">{{ post.body|safe }}</div>
+  <div class="article-end"><span>— 写到这里 —</span><p>{% for tag in post.tags %}<a href="/tags/#{{ tag|urlencode }}"># {{ tag }}</a> {% endfor %}</p><small>文字沿用原站 CC BY-NC-SA 4.0 许可；文中第三方图片的权利归原作者。</small></div>
+  {% if post.comments and config.twikoo_env %}<section class="comments" data-env="{{ config.twikoo_env }}" data-path="{{ post.comment_path }}"><h2>读到这里，留句话吧。</h2><p>点击后连接原有 Twikoo 评论服务。</p><button class="button comment-load">加载评论</button><div class="comment-status" role="status"></div><div id="twikoo"></div></section>{% endif %}
+</article>
+<aside class="toc"><div class="eyebrow">ON THIS PAGE</div><h3>这一页的书签</h3>{% if post.toc %}<nav aria-label="文章目录">{% for item in post.toc %}<a class="level-{{ item.level }}" href="#{{ item.id|urlencode }}">{{ item.text }}</a>{% endfor %}</nav>{% else %}<p class="muted">这一页适合一口气读完。</p>{% endif %}<a class="text-link" href="#main">回到页首 ↑</a></aside>
+</div>
+{% elif kind == 'archives' %}
+<header class="page-heading"><div class="eyebrow">A LITTLE COLLECTION OF TIME</div><h1>把日子，一页页收好。</h1><p>这里收着 {{ posts|length }} 篇文字。按时间慢慢往回走。</p></header>
+<section class="archive-list">{% set ns = namespace(year='') %}{% for p in posts %}{% if p.date[:4] != ns.year %}{% set ns.year = p.date[:4] %}<h2>{{ ns.year }}<span>YEAR IN NOTES</span></h2>{% endif %}<a class="archive-row" href="{{ p.url }}"><time>{{ p.date[5:]|replace('-', ' / ') }}</time><span>{{ p.title }}</span><small>{{ p.category }}</small><span aria-hidden="true">↗</span></a>{% endfor %}</section>
+{% elif kind == 'tags' %}
+<header class="page-heading"><div class="eyebrow">FOLLOW YOUR CURIOSITY</div><h1>从喜欢的地方翻开。</h1><p>按分类和标签整理的小小书架。</p></header>
+<div class="filters">{% for category in counts %}<a class="filter" href="/?category={{ category|urlencode }}#journal">{{ category }}</a>{% endfor %}</div>
+<div class="tag-index">{% for tag in tags %}<a href="#{{ tag|urlencode }}"># {{ tag }}</a>{% endfor %}</div>
+{% for tag, entries in tags.items() %}<section class="tag-section" id="{{ tag }}"><h2># {{ tag }}</h2><div class="post-grid">{% for p in entries %}{{ card(p) }}{% endfor %}</div></section>{% endfor %}
+{% elif kind == 'about' %}
+<header class="page-heading"><div class="eyebrow">HELLO, I'M MANUFOREST</div><h1>关于这个小角落。</h1><p>{{ config.description }}</p></header><article class="prose narrow">{{ about|safe }}<hr><a href="{{ repo }}">在 GitHub 找到我 ↗</a></article>
+{% elif kind == 'message' %}
+<header class="page-heading"><div class="eyebrow">LEAVE A LITTLE NOTE</div><h1>来过，就留句话吧。</h1><p>想说的话，慢慢写在这里。</p></header><section class="comments narrow" data-env="{{ config.twikoo_env }}" data-path="/page/message-board"><button class="button comment-load">加载原站留言</button><div class="comment-status" role="status"></div><div id="twikoo"></div></section>
+{% elif kind == 'write' %}
+<header class="page-heading writer-heading"><div><div class="eyebrow">A QUIET PLACE TO WRITE</div><h1>把这一刻，写下来。</h1><p>本机草稿 · Markdown · 图片随文打包</p></div><span id="save-status" class="save-status" role="status">正在打开本机草稿…</span></header>
+<noscript><p>写作台需要 JavaScript；也可以直接向仓库的 content/posts 上传 Markdown。</p></noscript>
+<div class="writer-actions"><label class="button secondary">导入 Markdown<input type="file" id="import-md" accept=".md,.markdown,text/markdown" hidden></label><button class="button secondary" id="new-draft">新建草稿</button><button class="button secondary" id="download-md">下载 .md</button><button class="button" id="download-zip">下载文章包 ↗</button><a class="text-link" target="_blank" rel="noopener" href="{{ repo }}/upload/{{ config.branch }}/content/posts">打开 GitHub 上传页 ↗</a></div>
+<div class="writer-meta"><label>文件夹名 / 链接标识<input id="file-slug" placeholder="my-first-note" value="my-first-note" maxlength="80"></label><p>标题、日期、分类在下方 Markdown 顶部填写。<br>不熟悉格式时，直接替换模板中的示例文字。</p></div>
+<div class="editor-grid"><section class="editor-pane"><div class="pane-heading"><span>MARKDOWN / 原稿</span><label class="text-link">插入图片 ＋<input type="file" id="add-images" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" multiple hidden></label></div><label class="sr-only" for="draft-text">Markdown 原稿</label><textarea id="draft-text" spellcheck="false" placeholder="从一句话开始…"></textarea><div class="editor-bottom"><span id="word-count">0 字</span><span>支持粘贴、拖入图片 · Ctrl / ⌘ S 保存</span></div></section><section class="editor-pane preview-pane"><div class="pane-heading"><span>PREVIEW / 基础预览</span><span>完整排版以构建结果为准</span></div><div id="draft-preview" class="prose"></div></section></div>
+<div id="attachment-list" class="attachment-list"></div><p id="writer-notice" role="status"></p>
+<details class="publish-guide" open><summary>写好以后，怎样发布？</summary><p><b>1.</b> 将头部 <code>draft: true</code> 改成 <code>draft: false</code>，检查标题和日期。<b>2.</b> 下载文章包并解压。<b>3.</b> 打开上方上传页，把解压得到的文章文件夹拖进去并提交到 main；自动构建通过后更新网站。直接上传 ZIP 不会发布。</p><p>新建草稿不会清除已下载的文件。草稿和图片仅保存在当前浏览器；清除网站数据会丢失它们，请定期导出。仓库是公开的：<b>draft 只控制网站展示，提交到 GitHub 的草稿仍然公开。</b></p><p>这是本地写作工具，不是带登录的 CMS。页面不接收 GitHub Token，也不代你执行提交。图片跟着 Markdown 留在仓库里。</p></details>
+{% else %}
+<section class="page-heading empty-state"><div class="eyebrow">A PAGE BETWEEN PAGES</div><h1>这一页，暂时不在这里。</h1><p>也许换了一处书签。试着搜索标题，或回到首页继续翻阅。</p><a class="button" href="/">返回首页</a></section>
+{% endif %}
+</main>
+<footer class="site-footer shell"><div><strong>Manuforest<span>✳</span></strong><p>记录没有失去的瞬间。</p></div><nav aria-label="页脚导航"><a href="/feed.xml">RSS</a><a href="/page/message-board/">留言板</a><a href="{{ repo }}">GitHub ↗</a><a href="/write/">写作台 ↗</a></nav><small>© 2023–{{ year }} · Made for slow reading.</small></footer>
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><h2 id="search-title">翻找一段记忆</h2><button class="icon-button" id="search-close" aria-label="关闭搜索">×</button></div><label class="sr-only" for="search-input">搜索标题、正文、标签</label><input id="search-input" type="search" placeholder="搜索标题、正文、标签…" autocomplete="off"><div id="search-status" role="status">输入关键词，寻找一篇文字。</div><div id="search-results"></div></dialog>
+</body></html>

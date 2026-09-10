@@ -1,0 +1,11 @@
+{
+  "title": "Manuforest",
+  "subtitle": "记录没有失去的瞬间",
+  "description": "关于 Galgame、动画，以及值得留下的日常。",
+  "url": "https://manuforest.github.io",
+  "repository": "Manuforest/Manuforest.github.io",
+  "branch": "main",
+  "avatar": "/images/3.png",
+  "author": "Manuforest",
+  "twikoo_env": "https://blog-nine-amber.vercel.app"
+}
