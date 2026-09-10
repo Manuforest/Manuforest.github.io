@@ -1,0 +1,11 @@
+{
+  "title": "Manuforest",
+  "subtitle": "文章",
+  "description": "Manuforest's Blog",
+  "url": "https://manuforest.github.io",
+  "repository": "Manuforest/Manuforest.github.io",
+  "branch": "main",
+  "avatar": "/images/3.png",
+  "author": "Manuforest",
+  "twikoo_env": "https://blog-nine-amber.vercel.app"
+}
